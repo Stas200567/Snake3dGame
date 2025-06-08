@@ -12,7 +12,6 @@ public class Snake : MonoBehaviour
     {
         _segments = new List<Transform>();
         _segments.Add(this.transform);
-        InvokeRepeating(nameof(Grow), 5f, 5f);
     }
     void Update()
     {
@@ -23,7 +22,8 @@ public class Snake : MonoBehaviour
         {
             moveTimer = 0f;
             Move();
-            for (int i = _segments.Count - 1; i > 0; i--) {
+            for (int i = _segments.Count - 1; i > 0; i--)
+            {
                 _segments[i].position = _segments[i - 1].position;
             }
         }
@@ -39,6 +39,7 @@ public class Snake : MonoBehaviour
             moveDirection = Vector2.left;
         else if (Input.GetKeyDown(KeyCode.D))
             moveDirection = Vector2.right;
+
     }
 
     void Move()
@@ -47,7 +48,7 @@ public class Snake : MonoBehaviour
         transform.position += moveVector;
     }
 
-    private void Grow()
+    public void Grow()
     {
         Transform segment = Instantiate(this.segmentPrefab);
         segment.position = _segments[_segments.Count - 1].position; 
