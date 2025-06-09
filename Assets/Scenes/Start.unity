@@ -1157,30 +1157,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1215595706}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-      - m_Target: {fileID: 937281557}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
 --- !u!114 &401060778
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1235,6 +1211,8 @@ MonoBehaviour:
   maintext: {fileID: 652547162}
   canvasMain: {fileID: 1096544392}
   canvasGame: {fileID: 261532187}
+  snake: {fileID: 1215595706}
+  coin: {fileID: 937281557}
 --- !u!1 &405896886
 GameObject:
   m_ObjectHideFlags: 0
@@ -3970,8 +3948,8 @@ Transform:
   m_GameObject: {fileID: 1215595706}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.75, y: -0.75, z: -2.183}
-  m_LocalScale: {x: 0.22500001, y: 0.22500001, z: 0.22500001}
+  m_LocalPosition: {x: -1.7514, y: -0.75261, z: -2.183}
+  m_LocalScale: {x: 0.175, y: 0.175, z: 0.125}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}

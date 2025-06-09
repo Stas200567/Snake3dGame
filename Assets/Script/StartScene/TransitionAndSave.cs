@@ -1,13 +1,16 @@
 using UnityEngine;
 using TMPro;
+using System.Collections;
 
 public class SaveInfo : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI difficulty;
     [SerializeField] private TextMeshProUGUI maintext;
-    [SerializeField] private GameObject canvasMain; 
+    [SerializeField] private GameObject canvasMain;
     [SerializeField] private GameObject canvasGame;
     private string previousDifficulty = "";
+    [SerializeField] private GameObject snake;
+    [SerializeField] private GameObject coin;
 
     void Update()
     {
@@ -45,6 +48,14 @@ public class SaveInfo : MonoBehaviour
             maintext.color = Color.red;
             return;
         }
+        StartCoroutine(LoadGameWithDelay());
+    }
+    private IEnumerator LoadGameWithDelay()
+    {
+        yield return new WaitForSeconds(1.25f);
+
+        snake.SetActive(true);
+        coin.SetActive(true);
         canvasMain.SetActive(false);
         canvasGame.SetActive(true);
     }

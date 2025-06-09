@@ -87,13 +87,13 @@ public class Snake : MonoBehaviour
         {
             if (i == _segments.Count - 1)
             {
-                _segments[i].localScale = segmentPrefab.localScale * 0.75f;
+                _segments[i].localScale = segmentPrefab.localScale * 0.85f;
             }
             else
             {
                 _segments[i].localScale = segmentPrefab.localScale;
             }
         }
-    }
+    } 
 
 }
