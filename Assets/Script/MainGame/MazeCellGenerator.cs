@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class MazeCellGenerator : MonoBehaviour
 {
+    public enum DifficultyLevel { Easy, Medium, Hard }
+
     [SerializeField]
-    GameObject blockPrefab; // кубик 0.25x0.25
+    GameObject blockPrefab;
 
     [SerializeField]
     int numX = 10;
@@ -14,12 +16,9 @@ public class MazeCellGenerator : MonoBehaviour
 
     float blockSize = 0.25f;
 
-    GameObject[,] blocks; // розмір 2*numX+1, 2*numY+1
-
-    bool[,] visited; // для клітинок (не для стін!)
-
+    GameObject[,] blocks;
+    bool[,] visited;
     Stack<Vector2Int> stack = new Stack<Vector2Int>();
-
     bool generating = false;
 
     void Start()
@@ -28,7 +27,7 @@ public class MazeCellGenerator : MonoBehaviour
         CreateMaze();
     }
 
-    void CreateGrid()
+    public void CreateGrid()
     {
         int width = numX * 2 + 1;
         int height = numY * 2 + 1;
@@ -44,7 +43,7 @@ public class MazeCellGenerator : MonoBehaviour
             for (int y = 0; y < height; y++)
             {
                 Vector3 localPos = new Vector3(x * blockSize - offsetX, y * blockSize - offsetY, 0);
-                Vector3 pos = transform.TransformPoint(localPos);
+                Vector3 pos = transform.position + transform.rotation * localPos;
 
                 if (x % 2 == 1 && y % 2 == 1)
                 {
@@ -52,7 +51,7 @@ public class MazeCellGenerator : MonoBehaviour
                 }
                 else
                 {
-                    GameObject block = Instantiate(blockPrefab, pos, Quaternion.identity, transform);
+                    GameObject block = Instantiate(blockPrefab, pos, transform.rotation, transform);
                     block.name = $"Block_{x}_{y}";
                     blocks[x, y] = block;
                 }
@@ -63,17 +62,14 @@ public class MazeCellGenerator : MonoBehaviour
     List<Vector2Int> GetUnvisitedNeighbours(int x, int y)
     {
         List<Vector2Int> neighbours = new List<Vector2Int>();
-
-        // 4 напрямки (по клітинках, не по блоках)
         if (x > 0 && !visited[x - 1, y]) neighbours.Add(new Vector2Int(x - 1, y));
         if (x < numX - 1 && !visited[x + 1, y]) neighbours.Add(new Vector2Int(x + 1, y));
         if (y > 0 && !visited[x, y - 1]) neighbours.Add(new Vector2Int(x, y - 1));
         if (y < numY - 1 && !visited[x, y + 1]) neighbours.Add(new Vector2Int(x, y + 1));
-
         return neighbours;
     }
 
-    void CreateMaze()
+    public void CreateMaze()
     {
         if (generating) return;
 
@@ -97,17 +93,13 @@ public class MazeCellGenerator : MonoBehaviour
         while (stack.Count > 0)
         {
             Vector2Int current = stack.Peek();
-
             var neighbours = GetUnvisitedNeighbours(current.x, current.y);
 
             if (neighbours.Count > 0)
             {
                 Vector2Int chosen = neighbours[Random.Range(0, neighbours.Count)];
                 visited[chosen.x, chosen.y] = true;
-
-                // Видаляємо стіну між current і chosen
                 RemoveWallBetween(current, chosen);
-
                 stack.Push(chosen);
             }
             else
@@ -118,22 +110,69 @@ public class MazeCellGenerator : MonoBehaviour
             yield return new WaitForSeconds(0.01f);
         }
 
+        ApplyDifficultyTweaks();
+
         generating = false;
     }
 
     void RemoveWallBetween(Vector2Int a, Vector2Int b)
     {
-        // Розрахунок позиції між двома клітинками
-        int wallX = a.x + b.x + 1; // +1 через індексацію в blocks
+        int wallX = a.x + b.x + 1;
         int wallY = a.y + b.y + 1;
 
-        // В системі координат blocks вони вдвічі більші і зсунути
-
-        // Залишаємо блоки клітинок, а стіну між ними видаляємо:
         if (blocks[wallX, wallY] != null)
         {
             Destroy(blocks[wallX, wallY]);
             blocks[wallX, wallY] = null;
+        }
+    }
+
+    void ApplyDifficultyTweaks()
+    {
+        DifficultyLevel level = ParseDifficulty(My_Text.Difficult);
+
+        int additionalWallsToRemove = 0;
+
+        switch (level)
+        {
+            case DifficultyLevel.Medium:
+                additionalWallsToRemove = (numX * numY) / 2;
+                break;
+            case DifficultyLevel.Easy:
+                additionalWallsToRemove = (numX * numY);
+                break;
+            case DifficultyLevel.Hard:
+            default:
+                return; // нічого не змінюємо
+        }
+
+        for (int i = 0; i < additionalWallsToRemove; i++)
+        {
+            // Випадково вибираємо клітинку і випадкову суміжну
+            Vector2Int a = new Vector2Int(Random.Range(0, numX), Random.Range(0, numY));
+            List<Vector2Int> neighbors = new List<Vector2Int>();
+
+            if (a.x > 0) neighbors.Add(new Vector2Int(a.x - 1, a.y));
+            if (a.x < numX - 1) neighbors.Add(new Vector2Int(a.x + 1, a.y));
+            if (a.y > 0) neighbors.Add(new Vector2Int(a.x, a.y - 1));
+            if (a.y < numY - 1) neighbors.Add(new Vector2Int(a.x, a.y + 1));
+
+            if (neighbors.Count > 0)
+            {
+                Vector2Int b = neighbors[Random.Range(0, neighbors.Count)];
+                RemoveWallBetween(a, b);
+            }
+        }
+    }
+
+    DifficultyLevel ParseDifficulty(string diff)
+    {
+        switch (diff.ToLower())
+        {
+            case "easy": return DifficultyLevel.Easy;
+            case "medium": return DifficultyLevel.Medium;
+            case "hard": return DifficultyLevel.Hard;
+            default: return DifficultyLevel.Hard;
         }
     }
 }

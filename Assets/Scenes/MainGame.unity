@@ -1224,8 +1224,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blockPrefab: {fileID: 1902458697072526099, guid: 6b67636da8344b64091e68353e551541, type: 3}
-  numX: 8
-  numY: 8
+  numX: 6
+  numY: 6
 --- !u!4 &954619509
 Transform:
   m_ObjectHideFlags: 0
