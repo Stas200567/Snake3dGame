@@ -136,19 +136,20 @@ public class MazeCellGenerator : MonoBehaviour
         switch (level)
         {
             case DifficultyLevel.Medium:
-                additionalWallsToRemove = (numX * numY) / 2;
+                additionalWallsToRemove = (int)(numX * numY * 0.25f);
                 break;
             case DifficultyLevel.Easy:
-                additionalWallsToRemove = (numX * numY);
+                additionalWallsToRemove = (int)(numX * numY * 0.5f);
                 break;
             case DifficultyLevel.Hard:
             default:
-                return; // нічого не змінюємо
+                return;
         }
 
-        for (int i = 0; i < additionalWallsToRemove; i++)
+        int removedCount = 0;
+
+        for (int i = 0; i < additionalWallsToRemove * 4; i++)
         {
-            // Випадково вибираємо клітинку і випадкову суміжну
             Vector2Int a = new Vector2Int(Random.Range(0, numX), Random.Range(0, numY));
             List<Vector2Int> neighbors = new List<Vector2Int>();
 
@@ -160,9 +161,22 @@ public class MazeCellGenerator : MonoBehaviour
             if (neighbors.Count > 0)
             {
                 Vector2Int b = neighbors[Random.Range(0, neighbors.Count)];
-                RemoveWallBetween(a, b);
+
+                int wallX = a.x + b.x + 1;
+                int wallY = a.y + b.y + 1;
+
+                if (blocks[wallX, wallY] != null)
+                {
+                    Destroy(blocks[wallX, wallY]);
+                    blocks[wallX, wallY] = null;
+                    removedCount++;
+
+                    if (removedCount >= additionalWallsToRemove)
+                        break;
+                }
             }
         }
+
     }
 
     DifficultyLevel ParseDifficulty(string diff)

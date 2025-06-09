@@ -5,7 +5,8 @@ public class SaveInfo : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI difficulty;
     [SerializeField] private TextMeshProUGUI maintext;
-
+    [SerializeField] private GameObject canvasMain; 
+    [SerializeField] private GameObject canvasGame;
     private string previousDifficulty = "";
 
     void Update()
@@ -15,7 +16,6 @@ public class SaveInfo : MonoBehaviour
         if (currentDifficulty != previousDifficulty)
         {
             previousDifficulty = currentDifficulty;
-            Debug.Log("Difficulty changed to: " + currentDifficulty);
 
             My_Text.Difficult = currentDifficulty;
 
@@ -45,10 +45,7 @@ public class SaveInfo : MonoBehaviour
             maintext.color = Color.red;
             return;
         }
-    }
-
-    public void LeaveGame()
-    {
-        My_Text.side = -1;
+        canvasMain.SetActive(false);
+        canvasGame.SetActive(true);
     }
 }

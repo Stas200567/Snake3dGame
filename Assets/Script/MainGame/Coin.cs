@@ -11,13 +11,13 @@ public class Coin : MonoBehaviour
     private void Start()
     {
         snake = FindObjectOfType<Snake>();
+        TeleportToRandomPosition();
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            snake.Grow();
             TeleportToRandomPosition();
             score++;
             scoreText.text = score.ToString();
@@ -26,8 +26,25 @@ public class Coin : MonoBehaviour
 
     private void TeleportToRandomPosition()
     {
-        float randomX = Mathf.Round(Random.Range(-2f, 2f) / 0.25f) * 0.25f;
-        float randomY = Mathf.Round(Random.Range(-4.5f, -0.5f) / 0.25f) * 0.25f;
-        transform.position = new Vector2(randomX, randomY);
+        Vector3 newPos;
+        int attempts = 0;
+        float checkRadius = 0.1f; 
+        do
+        {
+            float randomX = Mathf.Round(Random.Range(-2f, 2f) / 0.25f) * 0.25f;
+            float randomY = Mathf.Round(Random.Range(-4.5f, -0.5f) / 0.25f) * 0.25f;
+            newPos = new Vector3(randomX, randomY, transform.position.z);
+            attempts++;
+        }
+        while (Physics.CheckSphere(newPos, checkRadius, LayerMask.GetMask("Wall")) && attempts < 100);
+
+        if (attempts < 100)
+        {
+            transform.position = newPos;
+        }
+        else
+        {
+           
+        }
     }
 }
